@@ -10,8 +10,16 @@ struct ContentView: View {
                 .frame(width: 300, height: 400)
             
             
+            HStack {
+                Button("Move Left") {
+                    gameScene.movePlayer(to: "left")
+                }
+                
+                Button("Move Right") {
+                    gameScene.movePlayer(to: "right") 
+                }
+            }
         }
-        
     }
 }
 
