@@ -15,5 +15,8 @@ class GameScene: SKScene {
         ground = SKSpriteNode(color: .red, size: CGSize(width: self.frame.width,  height: self.frame.height))
         ground.position = CGPoint(x: self.frame.midX, y: -self.frame.height / 2 + 25)
         addChild(ground)
+        
+        self.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
     }
 }
