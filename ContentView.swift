@@ -11,5 +11,9 @@ class GameScene: SKScene {
         player = SKSpriteNode(color: .blue, size: CGSize(width: 50, height: 50))
         player.position = CGPoint(x:self.frame.midX, y: self.frame.midY)
         addChild(player)
+        
+        ground = SKSpriteNode(color: .red, size: CGSize(width: self.frame.width,  height: self.frame.height))
+        ground.position = CGPoint(x: self.frame.midX, y: -self.frame.height / 2 + 25)
+        addChild(ground)
     }
 }
