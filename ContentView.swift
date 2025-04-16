@@ -19,4 +19,11 @@ class GameScene: SKScene {
         self.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
         self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
     }
+ 
+    func jumpPlayer() {
+        if player.physicsBody?.velocity.dy == 0 {
+            player.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 250))
+        }
+    }
 }
+
