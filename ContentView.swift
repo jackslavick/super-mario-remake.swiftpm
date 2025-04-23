@@ -5,7 +5,6 @@ class GameScene: SKScene {
     var player: SKSpriteNode!
     var ground: SKSpriteNode!
     
-   
     override init(size: CGSize) {
         super.init(size: size)
         self.scaleMode = .aspectFill

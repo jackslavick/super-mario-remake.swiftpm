@@ -4,7 +4,7 @@ import SpriteKit
 struct ContentView: View {
     @State private var gameScene: GameScene
     
-   
+  
     init() {
         _gameScene = State(initialValue: GameScene(size: CGSize(width: 400, height: 600)))
     }
@@ -26,6 +26,7 @@ struct ContentView: View {
             .padding()
         }
         .onAppear {
+            
             let scene = GameScene(size: CGSize(width: 300, height: 400))
             scene.scaleMode = .aspectFill
             self.gameScene = scene
