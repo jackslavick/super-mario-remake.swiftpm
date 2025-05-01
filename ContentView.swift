@@ -1,53 +1,81 @@
-import SpriteKit
+import SwiftUI
 
-class GameScene: SKScene {
+struct ContentView: View {
+   
+    @State private var marioPosition = CGPoint(x: 200, y: 500)
+    @State private var marioVelocity = CGSize(width: 0, height: 0)
+    @State private var isJumping = false
+    @State private var isOnGround = false
     
-    var player: SKSpriteNode!
-    var ground: SKSpriteNode!
+   
+    let platform = CGRect(x: 0, y: 600, width: 400, height: 50)
     
-    override init(size: CGSize) {
-        super.init(size: size)
-        self.scaleMode = .aspectFill
+    let gravity: CGFloat = 0.5
+    let jumpForce: CGFloat = -15
+    let moveSpeed: CGFloat = 5
+    
+    var body: some View {
+        VStack {
+            ZStack {
+               
+                Color.blue.edgesIgnoringSafeArea(.all)
+                
+               
+                Rectangle()
+                    .frame(width: platform.width, height: platform.height)
+                    .position(x: platform.midX, y: platform.midY)
+                    .foregroundColor(.green)
+                
+               
+                Rectangle()
+                    .frame(width: 50, height: 50)
+                    .position(marioPosition)
+                    .foregroundColor(.red)
+            }
+            .gesture(DragGesture(minimumDistance: 0)
+                .onChanged { value in
+                   
+                    if value.translation.width > 0 {
+                       
+                        marioPosition.x += moveSpeed
+                    } else if value.translation.width < 0 {
+                      
+                        marioPosition.x -= moveSpeed
+                    }
+                }
+            )
+            .onAppear {
+                startGameLoop()
+            }
+        }
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    override func didMove(to view: SKView) {
-        player = SKSpriteNode(color: .blue, size: CGSize(width: 50, height: 50))
-        player.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
-        addChild(player)
-        
-        ground = SKSpriteNode(color: .red, size: CGSize(width: self.frame.width, height: self.frame.height))
-        ground.position = CGPoint(x: self.frame.midX, y: -self.frame.height / 2 + 25)
-        addChild(ground)
-        
-        self.physicsWorld.gravity = CGVector(dx: 0, dy: -9.8)
-        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+    
+    func startGameLoop() {
+        Timer.scheduledTimer(withTimeInterval: 0.016, repeats: true) { _ in
+          
+           
+        }
     }
     
-    func movePlayer(to direction: String) {
-        guard let player = player else { return }
-        
-        let moveAction: SKAction
-        
-        switch direction {
-        case "left":
-            moveAction = SKAction.moveBy(x: -100, y: 0, duration: 0.5)
-        case "right":
-            moveAction = SKAction.moveBy(x: 100, y: 0, duration: 0.5)
-        default:
-            return
+    
+    func applyGravity() {
+       
+        if !isOnGround {
+            marioVelocity.height += gravity
+        } else {
+            marioVelocity.height = 0
         }
         
-        player.run(moveAction)
-    }
-    
-    func jumpPlayer() {
-        if player.physicsBody?.velocity.dy == 0 {
-            player.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 250))
-        }
+        
     }
 }
 
+@main
+struct MarioGameApp: App {
+    var body: some Scene {
+        WindowGroup {
+            ContentView()
+        }
+    }
+}
