@@ -7,7 +7,10 @@ struct ContentView: View {
     @State private var isJumping = false
     @State private var isOnGround = false
     
+   
     let platform = CGRect(x: 0, y: 600, width: 400, height: 50)
+    
+   
     let gravity: CGFloat = 0.5
     let jumpForce: CGFloat = -15
     let moveSpeed: CGFloat = 5
@@ -24,8 +27,8 @@ struct ContentView: View {
                     .position(x: platform.midX, y: platform.midY)
                     .foregroundColor(.green)
                 
-                
-                Image(systemName: "mario")
+               
+                Image("mario")
                     .resizable()
                     .frame(width: 50, height: 50)
                     .position(marioPosition)
@@ -33,14 +36,12 @@ struct ContentView: View {
             }
             .gesture(DragGesture(minimumDistance: 0)
                 .onChanged { value in
-                    if value.translation.width > 0 {
-                        marioPosition.x += moveSpeed
-                    } else if value.translation.width < 0 {
-                        marioPosition.x -= moveSpeed
-                    }
+                   
+                    marioPosition.x += value.translation.width
                 }
             )
             .onTapGesture {
+                
                 if isOnGround {
                     marioVelocity.height = jumpForce
                     isOnGround = false
@@ -48,13 +49,13 @@ struct ContentView: View {
             }
             .onAppear {
                 
+                startGameLoop()
             }
         }
     }
     
-    
+   
     func applyGravity() {
-        
         if !isOnGround {
             marioVelocity.height += gravity
         } else {
@@ -62,16 +63,25 @@ struct ContentView: View {
         }
     }
     
+    
     func updatePosition() {
-       
         marioPosition.y += marioVelocity.height
         
-      
         if marioPosition.y >= platform.minY - 25 {
             marioPosition.y = platform.minY - 25
             isOnGround = true
         } else {
             isOnGround = false
+        }
+    }
+    
+   
+    func startGameLoop() {
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.016) {
+            applyGravity()
+            updatePosition()
+            startGameLoop()
         }
     }
 }
