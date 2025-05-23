@@ -29,12 +29,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             ZStack {
-                Image("mario")
-                    .resizable()
-                    .scaledToFill()
-                    .edgesIgnoringSafeArea(.all)
-                
-               
+                Color.blue.opacity(0.3).edgesIgnoringSafeArea(.all) //
                 ForEach(0..<platforms.count, id: \.self) { index in
                     Rectangle()
                         .frame(width: platforms[index].width, height: platforms[index].height)
@@ -42,24 +37,22 @@ struct ContentView: View {
                         .foregroundColor(.green)
                 }
                 
-              
                 ForEach(0..<obstacles.count, id: \.self) { index in
                     Rectangle()
                         .frame(width: obstacles[index].width, height: obstacles[index].height)
                         .position(x: obstacles[index].midX - screenOffset, y: obstacles[index].midY)
                         .foregroundColor(.red)
                 }
-
-               
+                
                 Rectangle()
                     .frame(width: finishLine.width, height: finishLine.height)
                     .position(x: finishLine.midX - screenOffset, y: finishLine.midY)
                     .foregroundColor(.yellow)
-
+                
                 Image("mario")
                     .resizable()
                     .frame(width: 50, height: 50)
-                    .position(marioPosition)
+                    .position(x: marioPosition.x - screenOffset, y: marioPosition.y)
                     .scaledToFit()
             }
             .onAppear {
@@ -85,7 +78,6 @@ struct ContentView: View {
                 }
                 .padding()
                 
-               
                 Button("Restart") {
                     restartGame()
                 }
@@ -103,55 +95,58 @@ struct ContentView: View {
     }
     
     func updatePosition() {
+        
         marioPosition.x += moveDirection
         
+        
+        marioPosition.x = max(25, marioPosition.x)
+        
        
-        screenOffset += moveDirection
+        screenOffset = marioPosition.x - UIScreen.main.bounds.width / 2
         
         
-        marioPosition.x = max(0, min(marioPosition.x, UIScreen.main.bounds.width - 50))
-        
-      
         marioPosition.y += marioVelocity.height
         
         isOnGround = false
         
-     
         let allSurfaces = platforms + obstacles
+        
         
         for surface in allSurfaces {
             let marioBottom = marioPosition.y + 25
             let marioTop = marioPosition.y - 25
+            let marioLeft = marioPosition.x - 25
+            let marioRight = marioPosition.x + 25
+            
             let surfaceTop = surface.minY
             let surfaceBottom = surface.maxY
-
-            let marioRight = marioPosition.x + 25
-            let marioLeft = marioPosition.x - 25
-
             let surfaceLeft = surface.minX
             let surfaceRight = surface.maxX
-
+           
             if marioBottom >= surfaceTop &&
                 marioTop < surfaceTop &&
                 marioRight > surfaceLeft &&
                 marioLeft < surfaceRight &&
                 marioVelocity.height >= 0 {
                 
+               
                 marioPosition.y = surfaceTop - 25
                 isOnGround = true
                 marioVelocity.height = 0
                 break
             }
         }
-
+        
        
-        if marioPosition.x + 25 > finishLine.minX && marioPosition.x - 25 < finishLine.maxX &&
-            marioPosition.y + 25 > finishLine.minY && marioPosition.y - 25 < finishLine.maxY {
+        if marioPosition.y > UIScreen.main.bounds.height - 25 {
             restartGame()
         }
         
         
-        if marioPosition.y > UIScreen.main.bounds.height {
+        if marioPosition.x + 25 > finishLine.minX &&
+            marioPosition.x - 25 < finishLine.maxX &&
+            marioPosition.y + 25 > finishLine.minY &&
+            marioPosition.y - 25 < finishLine.maxY {
             restartGame()
         }
     }
@@ -165,12 +160,11 @@ struct ContentView: View {
     }
     
     func restartGame() {
-       
         marioPosition = restartPosition
         marioVelocity = CGSize(width: 0, height: 0)
         isOnGround = false
         moveDirection = 0
-        screenOffset = 0 
+        screenOffset = 0
     }
 }
 
